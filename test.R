@@ -1,3 +1,3 @@
 #print("Hello world")
 #Just for test
-print("Hi")s
+print("Hi")
