@@ -1,3 +1,0 @@
-#print("Hello world")
-#Just for test
-print("Hi")asasas
