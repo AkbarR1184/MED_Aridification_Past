@@ -191,3 +191,33 @@ save_nc <- function(dummie_nc, nc_out){
   ncatt_put(ncoutput,"time","axis","T")
   nc_close(ncoutput)
 }
+
+#crop and save nc file for the specified region.
+crop_save_nc <- function(link_to_raw_nc,
+                         nc_out,
+                         var_name,
+                         var_unit,
+                         long_name) {
+  # NetCdf to brick object
+  nc_to_brick <- brick(link_to_raw_nc)
+  
+  # crop
+  crop_data <-
+    crop_space_time(nc_to_brick,
+                    STUDY_PERIOD_START,
+                    STUDY_PERIOD_END,
+                    STUDY_AREA)
+  
+  # save cropped nc
+  writeRaster(
+    crop_data,
+    nc_out,
+    overwrite = TRUE,
+    format = "CDF",
+    varname = var_name,
+    varunit = var_unit,
+    longname = long_name,
+    xname = "lon",
+    yname = "lat"
+  )
+}
