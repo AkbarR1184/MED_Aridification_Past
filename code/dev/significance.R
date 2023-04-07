@@ -54,3 +54,8 @@ tas_slope[, c("Positive_Trend_P10", "Positive_Trend_P90", "Negative_Trend_P10", 
 tas_slope[, c("sig_positive_slope", "sig_negative_slope") :=
              .(ifelse(Slope > Positive_Trend_P90 , "significant Upward change", NA),
                ifelse(Slope <  Negative_Trend_P10 , "significant Downward change", NA))]
+
+
+
+slope_with_significance_dt<- rbind(pdsi_slope, spei_slope, tas_slope)
+saveRDS(slope_with_significance_dt, "slope_with_significance_dt.rds")
