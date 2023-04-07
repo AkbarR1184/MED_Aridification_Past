@@ -1,16 +1,56 @@
 #calculating significant change in trend based on percentiles
+source("code/source/global_variables.R")
+source("code/source/functions.R")
 
-pdsi_slope_prob_30year[, c("Positive_Trend_P10", "Positive_Trend_P90", "Negative_Trend_P10", "Negative_Trend_P90") :=
-                         .(quantile(Slope[Trend == "Positive"], 0.1, na.rm = TRUE),
-                           quantile(Slope[Trend == "Positive"], 0.9, na.rm = TRUE),
-                           quantile(Slope[Trend == "Negative"], 0.1, na.rm = TRUE),
-                           quantile(Slope[Trend == "Negative"], 0.9, na.rm = TRUE)), by = StartYear]
+# Read slope data
+
+PHYDA <- readRDS(paste0(PATH_OUTFILES, "slope_pdsi_spei_tas.rds"))
+PHYDA[,Interval:=paste0(StartYear,"-", EndYear)]
+PHYDA[,c("StartYear", "EndYear")]=NULL
+pdsi_slope<-PHYDA[Variable=="pdsi_mn"]
+spei_slope<-PHYDA[Variable=="spei_mn"]
+tas_slope<-PHYDA[Variable=="tas_mn"]
+
+#calculating p10 and p90 for the PDSI
+
+pdsi_slope[, c("Positive_Trend_P10", "Positive_Trend_P90", "Negative_Trend_P10", "Negative_Trend_P90") :=
+                         .(quantile(Slope[Slope>=0], 0.1, na.rm = TRUE),
+                           quantile(Slope[Slope>=0], 0.9, na.rm = TRUE),
+                           quantile(Slope[Slope<0], 0.1, na.rm = TRUE),
+                           quantile(Slope[Slope<0], 0.9, na.rm = TRUE)), by = Interval]
 
 #setting threshold for the significant upward/downward change based on percentiles
 
-pdsi_slope_prob_30year[, c("sig_positive_slope", "sig_negative_slope") :=
+pdsi_slope[, c("sig_positive_slope", "sig_negative_slope") :=
                          .(ifelse(Slope > Positive_Trend_P90 , "significant Upward change", NA),
                            ifelse(Slope <  Negative_Trend_P10 , "significant Downward change", NA))]
 
 
-# subsetting data for plotting change in trend 
+#calculating p10 and p90 for the SPEI
+
+spei_slope[, c("Positive_Trend_P10", "Positive_Trend_P90", "Negative_Trend_P10", "Negative_Trend_P90") :=
+             .(quantile(Slope[Slope>=0], 0.1, na.rm = TRUE),
+               quantile(Slope[Slope>=0], 0.9, na.rm = TRUE),
+               quantile(Slope[Slope<0], 0.1, na.rm = TRUE),
+               quantile(Slope[Slope<0], 0.9, na.rm = TRUE)), by = Interval]
+
+#setting threshold for the significant upward/downward change based on percentiles
+
+spei_slope[, c("sig_positive_slope", "sig_negative_slope") :=
+             .(ifelse(Slope > Positive_Trend_P90 , "significant Upward change", NA),
+               ifelse(Slope <  Negative_Trend_P10 , "significant Downward change", NA))]
+
+
+#calculating p10 and p90 for the tas
+
+tas_slope[, c("Positive_Trend_P10", "Positive_Trend_P90", "Negative_Trend_P10", "Negative_Trend_P90") :=
+             .(quantile(Slope[Slope>=0], 0.1, na.rm = TRUE),
+               quantile(Slope[Slope>=0], 0.9, na.rm = TRUE),
+               quantile(Slope[Slope<0], 0.1, na.rm = TRUE),
+               quantile(Slope[Slope<0], 0.9, na.rm = TRUE)), by = Interval]
+
+#setting threshold for the significant upward/downward change based on percentiles
+
+tas_slope[, c("sig_positive_slope", "sig_negative_slope") :=
+             .(ifelse(Slope > Positive_Trend_P90 , "significant Upward change", NA),
+               ifelse(Slope <  Negative_Trend_P10 , "significant Downward change", NA))]
