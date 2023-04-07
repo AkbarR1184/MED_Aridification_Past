@@ -15,9 +15,14 @@ tas_dt<-PHYDA[variable=="tas_mn"]
 year_interval <- seq(min(pdsi_dt$year), max(pdsi_dt$year)+30, by=30)
 pdsi_dt$timestep <- NA
 pdsi_dt$timestep=as.character(pdsi_dt$timestep)
+
+#adding timewindow (e.g 1000-1030) to the variable 
+
 for (i in 2:length(year_interval)) {
   pdsi_dt[year<year_interval[i] & year>=year_interval[i-1], timestep:= paste0(year_interval[i-1], sep="-",year_interval[i])]
 }
+
+#calculating slope 
 
 pdsi_dt_slopes <- pdsi_dt[, {
   linear_model <- lm(value ~ year); coef(linear_model)[2]
