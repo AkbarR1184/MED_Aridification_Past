@@ -1,53 +1,25 @@
-#slope analysis for pdsi_mn& spei_mn& tas_mn
-
 source("code/source/global_variables.R")
 source("code/source/functions.R")
 
 # Read data
 
-data <- readRDS(paste0(PATH_OUTFILES, "PHYDA_pdsi_spei_tas_dt_1000_2000_yearly_0.25_degree.rds"))
+PHYDA <- readRDS(paste0(PATH_OUTFILES, "PHYDA_pdsi_spei_tas_dt_1000_2000_yearly_0.25_degree.rds"))
+PHYDA$year <- year(PHYDA$time)
+PHYDA$time=NULL
 
-data$year <- substr(data$time, 1, 4)
-data$time<-NULL
+#subsetting variables
+pdsi_dt<-PHYDA[variable=="pdsi_mn"]
+spei_dt<-PHYDA[variable=="spei_mn"]
+tas_dt<-PHYDA[variable=="tas_mn"]
 
-# Set rolling window size and start and end years
-window_size <- 30
-start_year <- 1000
-end_year <- 2000
-
-# creating and empty data table to store slopes
-slopes <- data.table(X=numeric(), Y=numeric(), Variable=character(), StartYear=numeric(), EndYear=numeric(), Slope=numeric())
-
-# Loop over all unique (x, y, variable) 
-
-unique_locs_vars <- unique(data[, .(X, Y, variable)])
-for (i in 1:nrow(unique_locs_vars)) {
-  
-  # Get current location and variable
-  current_location_variable <- unique_locs_vars[i, ]
-  
-  # Filter data for current location and variable and time window
-  mask <- data[X == current_location_variable$X & Y == current_location_variable$Y & variable == current_location_variable$variable]
-  
-  for (j in seq(start_year, end_year, by=window_size)) {
-    
-    # Calculate start and end years for current time window
-    start_time <- j
-    end_time <- min(j + window_size - 1, end_year)
-    
-    # Filter data for current time window
-    current_data <- mask[year >= start_time & year <= end_time]
-    
-    # Fit a linear regression model
-    if (nrow(current_data) > 1) {
-      model <- lm(value ~ year, data=current_data)
-      
-      # Extract the slope and store in the slopes data table
-      slopes <- rbindlist(list(slopes, data.table(X=current_location_variable$X, Y=current_location_variable$Y, Variable=current_location_variable$variable, StartYear=start_time, EndYear=end_time, Slope=coef(model)[2])))
-    }
-  }
+year_interval <- seq(min(pdsi_dt$year), max(pdsi_dt$year)+30, by=30)
+pdsi_dt$timestep <- NA
+pdsi_dt$timestep=as.character(pdsi_dt$timestep)
+for (i in 2:length(year_interval)) {
+  pdsi_dt[year<year_interval[i] & year>=year_interval[i-1], timestep:= paste0(year_interval[i-1], sep="-",year_interval[i])]
 }
 
-
-# save slopes data table
-saveRDS(slopes, paste0(PATH_OUTFILES, "slope_pdsi_spei_tas.rds"))
+pdsi_dt_slopes <- pdsi_dt[, {
+  linear_model <- lm(value ~ year); coef(linear_model)[2]
+}, by = .(X, Y, timestep)]
+setnames(pdsi_dt_slopes, "V1", "slope")

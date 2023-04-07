@@ -9,6 +9,8 @@ library(ggplot2)
 library(data.table)
 library(RColorBrewer)
 library(sf)
+library(lubridate)
+
 
 PATH_INFILES <- "~/shared/data/paleo/PHYDA" # Path for the input files 
 PATH_OUTFILES <- "~/shared/data_projects/med_datasets/1000_2000_data/" # Path for the cropped files 
