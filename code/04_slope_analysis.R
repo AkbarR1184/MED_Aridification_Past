@@ -61,5 +61,9 @@ tas_dt_slopes <- tas_dt[, {
 }, by = .(X, Y, timestep)]
 setnames(tas_dt_slopes, "V1", "slope")
 
+pdsi_dt_slopes$variable<-"pdsi_mn"
+spei_dt_slopes$variable<-"spei_mn"
+tas_dt_slopes$variable<- "tas_mn"
+
 slope_dt<-rbind(pdsi_dt_slopes, spei_dt_slopes, tas_dt_slopes)
 saveRDS(slope_dt, "slope_pdsi_spei_tas_1010-2000.rds")
