@@ -7,8 +7,8 @@ dt<- readRDS("slope_with_significance_dt.rds")
 dt[is.na(sig_positive_slope) & is.na(sig_negative_slope), 
    sig := "insig"][is.na(sig), sig := "sig"]
 
-dt_final <-dt[, c("X", "Y", "Variable","Slope", "Interval", "sig")]
-dt_final[ ,Trend:=sign(Slope)]
+dt_final <-dt[, c("X", "Y", "variable","slope", "timestep", "sig")]
+dt_final[ ,Trend:=sign(slope)]
 
 
 source("code/source/global_variables.R")
@@ -16,16 +16,16 @@ source("code/source/functions.R")
 
 
 ggplot() +
-  geom_raster(data = dt_final[Variable=="pdsi_mn"], aes(X, Y, fill = as.factor(Trend)))+
-  geom_point(data = dt_final[Variable=="pdsi_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
-  geom_point(data = dt_final[Variable=="pdsi_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
+  geom_raster(data = dt_final[variable=="pdsi_mn"], aes(X, Y, fill = as.factor(Trend)))+
+  geom_point(data = dt_final[variable=="pdsi_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
+  geom_point(data = dt_final[variable=="pdsi_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
   scale_fill_manual(values = c("tomato", "steelblue"), 
                     labels = c("Trend (+)", "Trend (-)")) +
   scale_color_manual(values = c("darkblue", "darkred"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
   scale_x_continuous(breaks = seq(-20, 30, 10)) +
   scale_y_continuous(breaks = seq(30, 70, 10)) +
-  facet_wrap(~Interval, nrow = 6, strip.position = "top")+
+  facet_wrap(~timestep, nrow = 5, strip.position = "top")+
   labs(x = "Longitude", y = "Latitude") +
   guides(fill = guide_legend(title = "")) +
   guides(color = guide_legend(override.aes = list(size = 5), title = "")) +
@@ -50,16 +50,16 @@ ggplot() +
 
 
 ggplot() +
-  geom_raster(data = dt_final[Variable=="spei_mn"], aes(X, Y, fill = as.factor(Trend)))+
-  geom_point(data = dt_final[Variable=="spei_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
-  geom_point(data = dt_final[Variable=="spei_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
+  geom_raster(data = dt_final[variable=="spei_mn"], aes(X, Y, fill = as.factor(Trend)))+
+  geom_point(data = dt_final[variable=="spei_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
+  geom_point(data = dt_final[variable=="spei_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
   scale_fill_manual(values = c("tomato", "steelblue"), 
                     labels = c("Trend (+)", "Trend (-)")) +
   scale_color_manual(values = c("darkblue", "darkred"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
   scale_x_continuous(breaks = seq(-20, 30, 10)) +
   scale_y_continuous(breaks = seq(30, 70, 10)) +
-  facet_wrap(~Interval, nrow = 6, strip.position = "top")+
+  facet_wrap(~timestep, nrow = 6, strip.position = "top")+
   labs(x = "Longitude", y = "Latitude") +
   guides(fill = guide_legend(title = "")) +
   guides(color = guide_legend(override.aes = list(size = 5), title = "")) +
@@ -84,16 +84,16 @@ ggplot() +
 
 
 ggplot() +
-  geom_raster(data = dt_final[Variable=="tas_mn"], aes(X, Y, fill = as.factor(Trend)))+
-  geom_point(data = dt_final[Variable=="tas_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
-  geom_point(data = dt_final[Variable=="tas_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
+  geom_raster(data = dt_final[variable=="tas_mn"], aes(X, Y, fill = as.factor(Trend)))+
+  geom_point(data = dt_final[variable=="tas_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
+  geom_point(data = dt_final[variable=="tas_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
   scale_fill_manual(values = c("tomato", "steelblue"), 
                     labels = c("Trend (+)", "Trend (-)")) +
   scale_color_manual(values = c("darkblue", "darkred"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
   scale_x_continuous(breaks = seq(-20, 30, 10)) +
   scale_y_continuous(breaks = seq(30, 70, 10)) +
-  facet_wrap(~Interval, nrow = 6, strip.position = "top")+
+  facet_wrap(~timestep, nrow = 6, strip.position = "top")+
   labs(x = "Longitude", y = "Latitude") +
   guides(fill = guide_legend(title = "")) +
   guides(color = guide_legend(override.aes = list(size = 5), title = "")) +
