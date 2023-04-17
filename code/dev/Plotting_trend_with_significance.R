@@ -3,7 +3,7 @@
 source("code/source/global_variables.R")
 source("code/source/functions.R")
 
-dt<- readRDS("slope_with_significance_dt.rds")
+dt<- readRDS(paste0(PATH_OUTFILES,"slope_with_significance_dt.rds"))
 dt <- dt[!(timestep =="1990-2020"), ]
 dt[is.na(sig_positive_slope) & is.na(sig_negative_slope), 
    sig := "insig"][is.na(sig), sig := "sig"]
@@ -11,17 +11,19 @@ dt[is.na(sig_positive_slope) & is.na(sig_negative_slope),
 dt_final <-dt[, c("X", "Y", "variable","slope", "timestep", "sig")]
 dt_final[ ,Trend:=sign(slope)]
 
-ggplot() +
+p_01<- ggplot() +
   geom_raster(data = dt_final[variable=="pdsi_mn"], aes(X, Y, fill = as.factor(Trend)))+
   geom_point(data = dt_final[variable=="pdsi_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
   geom_point(data = dt_final[variable=="pdsi_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
   scale_fill_manual(values = c("tomato", "steelblue"), 
-                    labels = c("Trend (+)", "Trend (-)")) +
+                    labels = c("Trend (-)", "Trend (+)")) +
   scale_color_manual(values = c("darkblue", "darkred"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
-  scale_x_continuous(breaks = seq(-20, 30, 10)) +
-  scale_y_continuous(breaks = seq(30, 70, 10)) +
-  facet_wrap(~timestep, nrow = 5, strip.position = "top")+
+  borders(colour = 'black', size = 0.2) +
+  coord_cartesian(xlim = c(-10,40), ylim = c(30, 45), expand = FALSE) +
+  scale_x_continuous(labels = ~ paste0(.x, "°")) +
+  scale_y_continuous(labels = ~ paste0(.x, "°")) +
+  facet_wrap(~timestep, ncol  = 5, strip.position = "top")+
   labs(x = "Longitude", y = "Latitude") +
   guides(fill = guide_legend(title = "")) +
   guides(color = guide_legend(override.aes = list(size = 5), title = "")) +
@@ -43,19 +45,19 @@ ggplot() +
         strip.placement = "outside",
         strip.text.x = element_text(size = 10, margin = margin(0,0,10,0)))
 
-
-
-ggplot() +
+p_02<- ggplot() +
   geom_raster(data = dt_final[variable=="spei_mn"], aes(X, Y, fill = as.factor(Trend)))+
   geom_point(data = dt_final[variable=="spei_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
   geom_point(data = dt_final[variable=="spei_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
   scale_fill_manual(values = c("tomato", "steelblue"), 
-                    labels = c("Trend (+)", "Trend (-)")) +
+                    labels = c("Trend (-)", "Trend (+)")) +
   scale_color_manual(values = c("darkblue", "darkred"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
-  scale_x_continuous(breaks = seq(-20, 30, 10)) +
-  scale_y_continuous(breaks = seq(30, 70, 10)) +
-  facet_wrap(~timestep, nrow = 6, strip.position = "top")+
+  borders(colour = 'black', size = 0.2) +
+  coord_cartesian(xlim = c(-10,40), ylim = c(30, 45), expand = FALSE) +
+  scale_x_continuous(labels = ~ paste0(.x, "°")) +
+  scale_y_continuous(labels = ~ paste0(.x, "°")) +
+  facet_wrap(~timestep, ncol  = 5, strip.position = "top")+
   labs(x = "Longitude", y = "Latitude") +
   guides(fill = guide_legend(title = "")) +
   guides(color = guide_legend(override.aes = list(size = 5), title = "")) +
@@ -78,18 +80,19 @@ ggplot() +
         strip.text.x = element_text(size = 10, margin = margin(0,0,10,0)))
 
 
-
-ggplot() +
+p_03<- ggplot() +
   geom_raster(data = dt_final[variable=="tas_mn"], aes(X, Y, fill = as.factor(Trend)))+
-  geom_point(data = dt_final[variable=="tas_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkred"), size=0.1)+
-  geom_point(data = dt_final[variable=="tas_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkblue"),size=0.1)+
+  geom_point(data = dt_final[variable=="tas_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
+  geom_point(data = dt_final[variable=="tas_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
   scale_fill_manual(values = c("steelblue", "tomato"), 
-                    labels = c("Trend (+)", "Trend (-)")) +
-  scale_color_manual(values = c("darkblue", "darkred"), 
+                    labels = c("Trend (-)", "Trend (+)")) +
+  scale_color_manual(values = c("darkred", "darkblue"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
-  scale_x_continuous(breaks = seq(-20, 30, 10)) +
-  scale_y_continuous(breaks = seq(30, 70, 10)) +
-  facet_wrap(~timestep, nrow = 6, strip.position = "top")+
+  borders(colour = 'black', size = 0.2) +
+  coord_cartesian(xlim = c(-10,40), ylim = c(30, 45), expand = FALSE) +
+  scale_x_continuous(labels = ~ paste0(.x, "°")) +
+  scale_y_continuous(labels = ~ paste0(.x, "°")) +
+  facet_wrap(~timestep, ncol  = 5, strip.position = "top")+
   labs(x = "Longitude", y = "Latitude") +
   guides(fill = guide_legend(title = "")) +
   guides(color = guide_legend(override.aes = list(size = 5), title = "")) +
@@ -110,5 +113,3 @@ ggplot() +
         panel.border = element_rect(fill = NA, color = "black"),
         strip.placement = "outside",
         strip.text.x = element_text(size = 10, margin = margin(0,0,10,0)))
-
-ggsave()
