@@ -5,15 +5,14 @@ source("code/source/functions.R")
 
 PHYDA <- readRDS(paste0(PATH_OUTFILES, "PHYDA_pdsi_spei_tas_dt_1000_2000_yearly_0.25_degree.rds"))
 PHYDA$year <- year(PHYDA$time)
-PHYDA_1010_2000<- PHYDA[PHYDA$year > 1009, ]
 PHYDA$time=NULL
 
 #subsetting variables
-pdsi_dt<-PHYDA_1010_2000[variable=="pdsi_mn"]
-spei_dt<-PHYDA_1010_2000[variable=="spei_mn"]
-tas_dt<-PHYDA_1010_2000[variable=="tas_mn"]
+pdsi_dt<-PHYDA[variable=="pdsi_mn"]
+spei_dt<-PHYDA[variable=="spei_mn"]
+tas_dt<-PHYDA[variable=="tas_mn"]
 
-year_interval <- seq(min(pdsi_dt$year), max(pdsi_dt$year), by=30)
+year_interval <- seq(min(pdsi_dt$year), max(pdsi_dt$year)+30, by=30)
 pdsi_dt$timestep <- NA
 pdsi_dt$timestep=as.character(pdsi_dt$timestep)
 
@@ -66,4 +65,4 @@ spei_dt_slopes$variable<-"spei_mn"
 tas_dt_slopes$variable<- "tas_mn"
 
 slope_dt<-rbind(pdsi_dt_slopes, spei_dt_slopes, tas_dt_slopes)
-saveRDS(slope_dt, "slope_pdsi_spei_tas_1010-2000.rds")
+saveRDS(slope_dt, "slope_pdsi_spei_tas_1000-2000.rds")
