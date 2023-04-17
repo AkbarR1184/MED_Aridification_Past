@@ -4,16 +4,12 @@ source("code/source/global_variables.R")
 source("code/source/functions.R")
 
 dt<- readRDS("slope_with_significance_dt.rds")
+dt <- dt[!(timestep =="1990-2020"), ]
 dt[is.na(sig_positive_slope) & is.na(sig_negative_slope), 
    sig := "insig"][is.na(sig), sig := "sig"]
 
 dt_final <-dt[, c("X", "Y", "variable","slope", "timestep", "sig")]
 dt_final[ ,Trend:=sign(slope)]
-
-
-source("code/source/global_variables.R")
-source("code/source/functions.R")
-
 
 ggplot() +
   geom_raster(data = dt_final[variable=="pdsi_mn"], aes(X, Y, fill = as.factor(Trend)))+
@@ -85,9 +81,9 @@ ggplot() +
 
 ggplot() +
   geom_raster(data = dt_final[variable=="tas_mn"], aes(X, Y, fill = as.factor(Trend)))+
-  geom_point(data = dt_final[variable=="tas_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkblue"), size=0.1)+
-  geom_point(data = dt_final[variable=="tas_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkred"),size=0.1)+
-  scale_fill_manual(values = c("tomato", "steelblue"), 
+  geom_point(data = dt_final[variable=="tas_mn" &Trend>0 & sig=="sig"], aes(X, Y, color="darkred"), size=0.1)+
+  geom_point(data = dt_final[variable=="tas_mn" &Trend<0 & sig=="sig"], aes(X, Y,  color="darkblue"),size=0.1)+
+  scale_fill_manual(values = c("steelblue", "tomato"), 
                     labels = c("Trend (+)", "Trend (-)")) +
   scale_color_manual(values = c("darkblue", "darkred"), 
                      labels = c("Significant trend (+)","significant trend (-)")) +
@@ -114,3 +110,5 @@ ggplot() +
         panel.border = element_rect(fill = NA, color = "black"),
         strip.placement = "outside",
         strip.text.x = element_text(size = 10, margin = margin(0,0,10,0)))
+
+ggsave()
