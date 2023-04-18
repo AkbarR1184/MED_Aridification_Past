@@ -3,7 +3,7 @@ source("code/source/functions.R")
 source("code/source/global_variables.R")
 #reading the data and subsetting for frequency plot
 
-slope_30year<-readRDS("~/shared/data_projects/med_datasets/1000_2000_data/slope_pdsi_spei_tas_1000-2000.rds")
+slope_30year<-readRDS("slope_pdsi_spei_tas_1000-2000.rds")
 slope_30year[,TrendSign:= sign(slope)]
 slope_30year <- slope_30year[slope_30year$timestep != "1990-2020", ]
 
@@ -36,22 +36,22 @@ ggplot() +
   labs(fill = "Relative Frequency (%)", title = "Frequency Maps", x = "Longitude", y = "Latitude") +
   scale_x_continuous(labels = ~ paste0(.x, "°")) +
   scale_y_continuous(labels = ~ paste0(.x, "°")) +
-  facet_wrap(~variable, nrow = 3, labeller = labeller(variable = c("pdsi_mn" = "PDSI", "spei_mn" = "SPEI", "tas_mn" = "Temperature (Centigrade)"))) +
+  facet_wrap(~variable, nrow = 3, labeller = labeller(variable = c("pdsi_mn" = "PDSI", "spei_mn" = "SPEI", "tas_mn" = "Temperature"))) +
   theme(panel.background = element_rect(fill = NA), panel.ontop = TRUE,
         axis.ticks.length = unit(0, "cm"),
         panel.grid.major = element_line(colour = "gray60"),
         panel.border = element_rect(size = 1, fill = NA),
-        panel.spacing =unit(1, "cm"), 
+        panel.spacing =unit(0.5, "cm"), 
         axis.title = element_blank(),
-        axis.text = element_text(size = 16),
-        plot.title = element_text(size = 20, hjust = 0.5),
-        legend.text = element_text(size = 16),
+        axis.text = element_text(size = 24),
+        plot.title = element_text(size = 24, hjust = 0.5),
+        legend.text = element_text(size = 20),
         legend.key.width  = unit(4, "cm"),
         legend.key.height = unit(1, "cm"),
         legend.title = element_text(size = 20),
         legend.position = 'bottom',
         strip.background = element_rect(fill = NA), 
-        strip.text = element_text(size = 20, face = "bold"))
+        strip.text = element_text(size = 24, face = "bold"))
 
-ggsave("Frequncy_maps.png", dpi = 600, height = 21, width = 16)
+ggsave("Frequncy_maps.png", dpi = 600, height = 3*15, width = 50, units = "cm")
 
